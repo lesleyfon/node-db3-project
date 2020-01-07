@@ -9,14 +9,26 @@ function findById(id) {
     return db('schemes').where({id: id}).first()
 }
 
-async function findSteps(id){
+function findSteps(id){
 
     return db('steps')
     .where({scheme_id: id})
     .select('step_number', 'instructions','scheme_id')
 }
+async function add(scheme) {
+    const [ insertedSchemeId ] = await db('schemes').insert(scheme);
+    return findById(insertedSchemeId);
+}
+
+async function addStep (stepData, id){
+    const [stepId] = await db('steps').insert(stepData).where({scheme_id: id});
+
+    return findSteps( stepId )
+}
 module.exports = {
     find,
     findById,
-    findSteps
+    findSteps,
+    add,
+    addStep
 }

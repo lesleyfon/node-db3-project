@@ -1,9 +1,9 @@
 const Knex = require("knex");
-const configOptions = require('./../knexfile')
-const db = Knex(configOptions.development)
+const configOptions = require('./../knexfile');
+const db = Knex(configOptions.development);
 
 function find() {
-  return db('schemes');
+  return db('steps');
 }
 function findById(id) {
     return db('schemes').where({id: id}).first()
@@ -13,7 +13,7 @@ function findSteps(id){
 
     return db('steps')
     .where({scheme_id: id})
-    .select('step_number', 'instructions','scheme_id')
+    .select('step_number', 'instructions','scheme_id', 'id')
 }
 async function add(scheme) {
     const [ insertedSchemeId ] = await db('schemes').insert(scheme);
@@ -21,14 +21,27 @@ async function add(scheme) {
 }
 
 async function addStep (stepData, id){
-    const [stepId] = await db('steps').insert(stepData).where({scheme_id: id});
-
-    return findSteps( stepId )
+    const stepPayload = {
+        scheme_id: id,
+        step_number: stepData.step_number,
+        instructions: stepData.instructions
+    }
+    db('steps').insert(stepPayload);
+    return findSteps(id)
+}
+function update (changes, id){
+  db('schemes').update(changes).where({id, id})
+  return findSteps(id)
+}
+function remove(id) {
+    return db('schemes').del().where({id: id})
 }
 module.exports = {
     find,
     findById,
     findSteps,
     add,
-    addStep
+    addStep,
+    update,
+    remove
 }

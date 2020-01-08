@@ -36,6 +36,7 @@ router.get('/:id/steps', (req, res) => {
   Schemes.findSteps(id)
   .then(steps => {
     if (steps.length) {
+      
       res.json(steps);
     } else {
       res.status(404).json({ message: 'Could not find steps for given scheme' })
@@ -54,6 +55,7 @@ router.post('/', (req, res) => {
     res.status(201).json(scheme);
   })
   .catch (err => {
+    console.log(err)
     res.status(500).json({ message: 'Failed to create new scheme' });
   });
 });
@@ -67,6 +69,7 @@ router.post('/:id/steps', (req, res) => {
     if (scheme) {
       Schemes.addStep(stepData, id)
       .then(step => {
+        console.log(step)
         res.status(201).json(step);
       })
     } else {
